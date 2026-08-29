@@ -1,0 +1,2873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+
+<title>MoveFlow – Exercise Session Generator</title>
+
+<style>
+:root {
+  --bg:#07111f;
+  --panel:#0d1b2b;
+  --panel2:#12243a;
+  --line:#284158;
+  --text:#f5f9fc;
+  --muted:#9fb2c6;
+  --blue:#35c2ff;
+  --green:#73e2a7;
+  --yellow:#ffd166;
+  --red:#ff6b6b;
+}
+
+* {
+  box-sizing:border-box;
+}
+
+html {
+  scroll-behavior:smooth;
+}
+
+body {
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left,#12385d,#07111f 38%,#03080e);
+  color:var(--text);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font:inherit;
+}
+
+button {
+  cursor:pointer;
+}
+
+.app {
+  width:min(1200px,100%);
+  margin:auto;
+  min-height:100vh;
+}
+
+header {
+  padding:22px 18px 14px;
+}
+
+header h1 {
+  margin:0;
+  font-size:2rem;
+}
+
+header p {
+  color:var(--muted);
+  margin:5px 0 0;
+}
+
+nav {
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:10px 16px 14px;
+  border-bottom:1px solid var(--line);
+}
+
+.nav-btn {
+  border:1px solid var(--line);
+  background:#102239;
+  color:#dce8f2;
+  border-radius:999px;
+  padding:10px 14px;
+  white-space:nowrap;
+  font-weight:700;
+}
+
+.nav-btn.active {
+  background:var(--blue);
+  color:#03283b;
+  border-color:transparent;
+}
+
+main {
+  padding:16px;
+}
+
+.page {
+  display:none;
+}
+
+.page.active {
+  display:block;
+}
+
+.card {
+  background:
+    linear-gradient(180deg,#102239,#0b1827);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+  margin-bottom:15px;
+}
+
+.card h2,
+.card h3 {
+  margin-top:0;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.grid3 {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+
+.field {
+  display:grid;
+  gap:6px;
+}
+
+.field label {
+  color:var(--muted);
+  font-size:.82rem;
+  font-weight:700;
+}
+
+input,
+select,
+textarea {
+  width:100%;
+  padding:11px 12px;
+  background:#071521;
+  border:1px solid var(--line);
+  border-radius:12px;
+  color:white;
+}
+
+textarea {
+  min-height:100px;
+  resize:vertical;
+}
+
+.btn {
+  border:1px solid var(--line);
+  background:#172c42;
+  color:white;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:750;
+}
+
+.btn.primary {
+  background:var(--blue);
+  color:#03283b;
+  border-color:transparent;
+}
+
+.btn.green {
+  background:var(--green);
+  color:#05261a;
+  border-color:transparent;
+}
+
+.btn.red {
+  background:#421e27;
+  color:#ffdce0;
+}
+
+.btn.small {
+  padding:7px 10px;
+  font-size:.84rem;
+}
+
+.row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+}
+
+.muted {
+  color:var(--muted);
+}
+
+.notice {
+  border:1px solid #27506a;
+  background:#10283a;
+  border-radius:14px;
+  padding:12px;
+  color:#cbe8f8;
+  line-height:1.5;
+  font-size:.88rem;
+}
+
+.exercise-list {
+  display:grid;
+  gap:10px;
+}
+
+.exercise-row {
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:12px;
+  background:#0c1a29;
+}
+
+.exercise-row h3 {
+  margin:0 0 5px;
+}
+
+.exercise-row .details {
+  color:var(--muted);
+  font-size:.82rem;
+  margin-bottom:9px;
+}
+
+.library-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+
+.exercise-card {
+  border:1px solid var(--line);
+  background:#0b1927;
+  border-radius:17px;
+  overflow:hidden;
+}
+
+.exercise-card .visual {
+  height:135px;
+  display:grid;
+  place-items:center;
+  background:
+    linear-gradient(135deg,#def5ff,#f5fbfd);
+  color:#15384d;
+  font-size:3rem;
+}
+
+.exercise-card .body {
+  padding:12px;
+}
+
+.exercise-card h3 {
+  margin:0 0 5px;
+}
+
+.exercise-card p {
+  color:var(--muted);
+  line-height:1.4;
+  font-size:.83rem;
+}
+
+.tags {
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+  margin-bottom:7px;
+}
+
+.tag {
+  border:1px solid #34536f;
+  color:#c6d8e8;
+  border-radius:999px;
+  padding:3px 7px;
+  font-size:.7rem;
+}
+
+.session-stage {
+  text-align:center;
+}
+
+.stage-icon {
+  height:200px;
+  border-radius:18px;
+  background:
+    linear-gradient(145deg,#e7f7ff,#f9fcfd);
+  display:grid;
+  place-items:center;
+  color:#14384e;
+  font-size:5rem;
+  margin-bottom:15px;
+}
+
+.phase {
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  color:var(--blue);
+  font-size:.75rem;
+  font-weight:900;
+}
+
+.current-name {
+  font-size:2rem;
+  font-weight:900;
+  margin:8px 0;
+}
+
+.timer {
+  font-size:6rem;
+  line-height:1;
+  font-weight:950;
+  margin:18px 0;
+  font-variant-numeric:tabular-nums;
+}
+
+.timer.rest {
+  color:var(--green);
+}
+
+.progress-track {
+  height:10px;
+  background:#040b12;
+  border-radius:999px;
+  overflow:hidden;
+  margin:15px 0;
+}
+
+.progress {
+  height:100%;
+  width:0%;
+  background:
+    linear-gradient(90deg,var(--blue),var(--green));
+}
+
+.session-controls {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.anatomy {
+  position:relative;
+  max-width:330px;
+  margin:auto;
+  height:430px;
+  background:
+    linear-gradient(145deg,#dff5ff,#f6fbfd);
+  border-radius:22px;
+  overflow:hidden;
+}
+
+.person {
+  position:absolute;
+  inset:28px 80px;
+}
+
+.head {
+  position:absolute;
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  background:#87cde9;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.body-shape {
+  position:absolute;
+  width:105px;
+  height:165px;
+  border-radius:45% 45% 30% 30%;
+  background:#6bbbdc;
+  top:65px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.arm {
+  position:absolute;
+  width:32px;
+  height:160px;
+  background:#6bbbdc;
+  border-radius:20px;
+  top:75px;
+}
+
+.arm.left {
+  left:0;
+  transform:rotate(8deg);
+}
+
+.arm.right {
+  right:0;
+  transform:rotate(-8deg);
+}
+
+.leg {
+  position:absolute;
+  width:38px;
+  height:175px;
+  background:#6bbbdc;
+  border-radius:20px;
+  top:215px;
+}
+
+.leg.left {
+  left:55px;
+}
+
+.leg.right {
+  right:55px;
+}
+
+.body-button {
+  position:absolute;
+  border:1px solid #7aaec4;
+  background:white;
+  color:#12384c;
+  padding:6px 9px;
+  border-radius:999px;
+  font-size:.72rem;
+  font-weight:800;
+  z-index:4;
+}
+
+.body-button:hover {
+  background:#c8f1ff;
+}
+
+.b-neck {top:62px;left:135px}
+.b-shoulder {top:95px;left:40px}
+.b-arms {top:145px;right:25px}
+.b-chest {top:130px;left:126px}
+.b-back {top:175px;left:125px}
+.b-core {top:215px;left:130px}
+.b-hips {top:250px;left:132px}
+.b-quads {top:300px;left:50px}
+.b-ham {top:300px;right:30px}
+.b-knees {top:340px;left:130px}
+.b-calves {top:380px;left:48px}
+.b-feet {bottom:7px;right:30px}
+
+.saved-card {
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:13px;
+  margin-bottom:10px;
+  background:#0b1927;
+}
+
+.media-preview {
+  min-height:180px;
+  border:1px dashed #45667e;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  color:var(--muted);
+}
+
+.media-preview img,
+.media-preview video {
+  max-width:100%;
+  max-height:260px;
+}
+
+audio {
+  width:100%;
+}
+
+.hidden {
+  display:none !important;
+}
+
+@media(max-width:850px) {
+  .grid,
+  .grid3,
+  .library-grid {
+    grid-template-columns:1fr;
+  }
+
+  .session-controls {
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .timer {
+    font-size:5rem;
+  }
+}
+
+@media(max-width:500px) {
+  header h1 {
+    font-size:1.65rem;
+  }
+
+  main {
+    padding:10px;
+  }
+
+  .card {
+    padding:13px;
+  }
+
+  .timer {
+    font-size:4.4rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <h1>MoveFlow</h1>
+  <p>Exercise & gym session generator</p>
+</header>
+
+<nav>
+  <button class="nav-btn active" data-page="builder">Build Session</button>
+  <button class="nav-btn" data-page="session">Workout</button>
+  <button class="nav-btn" data-page="library">Exercise Library</button>
+  <button class="nav-btn" data-page="saved">My Sessions</button>
+  <button class="nav-btn" data-page="custom">Add Exercise</button>
+  <button class="nav-btn" data-page="music">Music</button>
+</nav>
+
+<main>
+
+<!-- BUILDER -->
+
+<section id="builder" class="page active">
+
+<div class="card">
+  <h2>Session Settings</h2>
+
+  <div class="notice">
+    Choose automatic timing if you want MoveFlow to calculate the
+    exercise duration from your overall session time, number of
+    exercises and rest periods.
+  </div>
+
+  <br>
+
+  <div class="grid">
+
+    <div class="field">
+      <label>Overall session length (minutes)</label>
+      <input id="totalMinutes" type="number" value="20" min="1">
+    </div>
+
+    <div class="field">
+      <label>Number of exercises</label>
+      <input id="exerciseCount" type="number" value="8" min="1">
+    </div>
+
+    <div class="field">
+      <label>Exercise duration (seconds)</label>
+      <input id="exerciseSeconds" type="number" value="90" min="5">
+    </div>
+
+    <div class="field">
+      <label>Rest between exercises (seconds)</label>
+      <input id="restSeconds" type="number" value="30" min="0">
+    </div>
+
+    <div class="field">
+      <label>Default sets</label>
+      <input id="defaultSets" type="number" value="1" min="1">
+    </div>
+
+    <div class="field">
+      <label>Default reps</label>
+      <input id="defaultReps" type="number" value="10" min="0">
+    </div>
+
+  </div>
+
+  <br>
+
+  <label class="row">
+    <input
+      id="automaticTiming"
+      type="checkbox"
+      checked
+      style="width:22px"
+    >
+    <strong>Automatically calculate exercise duration</strong>
+  </label>
+
+  <br>
+
+  <div class="row">
+    <button class="btn primary" onclick="generateSession()">
+      Generate Session
+    </button>
+
+    <button class="btn" onclick="clearSession()">
+      Clear
+    </button>
+  </div>
+
+</div>
+
+<div class="card">
+  <h2>Current Session</h2>
+  <div id="builderSessionList" class="exercise-list"></div>
+</div>
+
+</section>
+
+
+<!-- WORKOUT -->
+
+<section id="session" class="page">
+
+<div class="card session-stage">
+
+  <div id="stageIcon" class="stage-icon">🏋️</div>
+
+  <div id="phase" class="phase">Ready</div>
+
+  <div id="currentName" class="current-name">
+    Build a session to begin
+  </div>
+
+  <div id="currentDescription" class="muted">
+    Your exercise instructions appear here.
+  </div>
+
+  <div id="timer" class="timer">00:00</div>
+
+  <div id="repInfo" class="muted"></div>
+
+  <div class="progress-track">
+    <div id="progress" class="progress"></div>
+  </div>
+
+  <div id="sessionPosition" class="muted"></div>
+
+  <br>
+
+  <div class="session-controls">
+
+    <button class="btn" onclick="previousStage()">
+      Previous
+    </button>
+
+    <button
+      id="playButton"
+      class="btn green"
+      onclick="toggleWorkout()"
+    >
+      Start
+    </button>
+
+    <button class="btn" onclick="skipStage()">
+      Skip
+    </button>
+
+    <button class="btn red" onclick="resetWorkout()">
+      Reset
+    </button>
+
+  </div>
+
+</div>
+
+<div class="card">
+  <h3>Voice Coaching</h3>
+
+  <div class="row">
+
+    <label>
+      <input
+        id="voiceEnabled"
+        type="checkbox"
+        checked
+        style="width:auto"
+      >
+      Voice reminders
+    </label>
+
+    <label>
+      <input
+        id="motivationEnabled"
+        type="checkbox"
+        checked
+        style="width:auto"
+      >
+      Motivational prompts
+    </label>
+
+  </div>
+
+</div>
+
+</section>
+
+
+<!-- LIBRARY -->
+
+<section id="library" class="page">
+
+<div class="card">
+
+  <h2>Select by body area</h2>
+
+  <div class="anatomy">
+
+    <div class="person">
+      <div class="head"></div>
+      <div class="body-shape"></div>
+      <div class="arm left"></div>
+      <div class="arm right"></div>
+      <div class="leg left"></div>
+      <div class="leg right"></div>
+    </div>
+
+    <button class="body-button b-neck" onclick="filterRegion('Neck')">
+      Neck
+    </button>
+
+    <button class="body-button b-shoulder" onclick="filterRegion('Shoulders')">
+      Shoulders
+    </button>
+
+    <button class="body-button b-arms" onclick="filterRegion('Arms')">
+      Arms
+    </button>
+
+    <button class="body-button b-chest" onclick="filterRegion('Chest')">
+      Chest
+    </button>
+
+    <button class="body-button b-back" onclick="filterRegion('Back')">
+      Back
+    </button>
+
+    <button class="body-button b-core" onclick="filterRegion('Core')">
+      Core
+    </button>
+
+    <button class="body-button b-hips" onclick="filterRegion('Hips')">
+      Hips
+    </button>
+
+    <button class="body-button b-quads" onclick="filterRegion('Quads')">
+      Quads
+    </button>
+
+    <button class="body-button b-ham" onclick="filterRegion('Hamstrings')">
+      Hamstrings
+    </button>
+
+    <button class="body-button b-knees" onclick="filterRegion('Knees')">
+      Knees
+    </button>
+
+    <button class="body-button b-calves" onclick="filterRegion('Calves')">
+      Calves
+    </button>
+
+    <button class="body-button b-feet" onclick="filterRegion('Feet')">
+      Feet
+    </button>
+
+  </div>
+
+</div>
+
+<div class="card">
+
+  <div class="grid3">
+
+    <div class="field">
+      <label>Search exercises</label>
+      <input
+        id="librarySearch"
+        placeholder="e.g. shoulder, stretch, curl"
+        oninput="renderLibrary()"
+      >
+    </div>
+
+    <div class="field">
+      <label>Body region</label>
+      <select id="regionFilter" onchange="renderLibrary()"></select>
+    </div>
+
+    <div class="field">
+      <label>Exercise type</label>
+      <select id="typeFilter" onchange="renderLibrary()">
+        <option value="All">All types</option>
+        <option value="Strength">Strength</option>
+        <option value="Stretch">Stretch</option>
+        <option value="Mobility">Mobility</option>
+        <option value="Balance">Balance</option>
+      </select>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="libraryGrid" class="library-grid"></div>
+
+</section>
+
+
+<!-- SAVED -->
+
+<section id="saved" class="page">
+
+<div class="card">
+
+  <h2>My Sessions</h2>
+
+  <p class="muted">
+    Save favourite sessions like workout playlists and reload
+    them whenever you want.
+  </p>
+
+  <div class="field">
+    <label>Session name</label>
+    <input
+      id="sessionName"
+      placeholder="e.g. Morning mobility"
+    >
+  </div>
+
+  <br>
+
+  <button class="btn green" onclick="saveCurrentSession()">
+    ★ Save Current Session
+  </button>
+
+</div>
+
+<div id="savedSessions"></div>
+
+</section>
+
+
+<!-- CUSTOM EXERCISE -->
+
+<section id="custom" class="page">
+
+<div class="card">
+
+  <h2>Add Your Own Exercise</h2>
+
+  <p class="muted">
+    Add exercises supplied by your physiotherapist, personal
+    trainer or coach. You can attach a photograph or a video
+    demonstration.
+  </p>
+
+  <div class="grid">
+
+    <div class="field">
+      <label>Exercise name</label>
+      <input id="customName">
+    </div>
+
+    <div class="field">
+      <label>Body region</label>
+      <select id="customRegion"></select>
+    </div>
+
+    <div class="field">
+      <label>Exercise type</label>
+      <select id="customType">
+        <option>Strength</option>
+        <option>Stretch</option>
+        <option>Mobility</option>
+        <option>Balance</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Image or MP4/video</label>
+      <input
+        id="customMedia"
+        type="file"
+        accept="image/*,video/mp4,video/*"
+        onchange="previewMedia(event)"
+      >
+    </div>
+
+  </div>
+
+  <br>
+
+  <div class="field">
+    <label>Description / technique</label>
+    <textarea
+      id="customDescription"
+      placeholder="Describe how the exercise should be performed..."
+    ></textarea>
+  </div>
+
+  <br>
+
+  <div id="mediaPreview" class="media-preview">
+    Image or video preview
+  </div>
+
+  <br>
+
+  <button class="btn green" onclick="addCustomExercise()">
+    Save Exercise
+  </button>
+
+</div>
+
+</section>
+
+
+<!-- MUSIC -->
+
+<section id="music" class="page">
+
+<div class="card">
+
+  <h2>Workout Music</h2>
+
+  <p class="muted">
+    Play music while your workout runs. Voice coaching will
+    temporarily reduce the volume of music played through this
+    page.
+  </p>
+
+  <div class="field">
+    <label>Select an audio file</label>
+    <input
+      id="musicFile"
+      type="file"
+      accept="audio/*"
+      onchange="loadMusic(event)"
+    >
+  </div>
+
+  <br>
+
+  <audio id="musicPlayer" controls></audio>
+
+  <br><br>
+
+  <div class="field">
+    <label>
+      Music volume:
+      <span id="musicVolumeLabel">60%</span>
+    </label>
+
+    <input
+      id="musicVolume"
+      type="range"
+      min="0"
+      max="100"
+      value="60"
+      oninput="setMusicVolume(this.value)"
+    >
+  </div>
+
+</div>
+
+<div class="card">
+
+  <h3>Spotify / Apple Music</h3>
+
+  <div class="notice">
+    Spotify or Apple Music can run alongside MoveFlow.
+    Browser security prevents this webpage from directly
+    controlling the volume of another music application.
+    For guaranteed voice-over volume reduction, play an audio
+    file using the MoveFlow player above.
+  </div>
+
+  <br>
+
+  <div class="row">
+
+    <button
+      class="btn green"
+      onclick="window.open('https://open.spotify.com','_blank')"
+    >
+      Open Spotify
+    </button>
+
+    <button
+      class="btn"
+      onclick="window.open('https://music.apple.com','_blank')"
+    >
+      Open Apple Music
+    </button>
+
+  </div>
+
+</div>
+
+</section>
+
+</main>
+</div>
+
+<script>
+
+/* ---------------------------------------------------------
+   MOVEFLOW DATA
+--------------------------------------------------------- */
+
+const REGIONS = [
+  "All",
+  "Biceps",
+  "Triceps",
+  "Wrists",
+  "Forearms",
+  "Shoulders",
+  "Neck",
+  "Upper Back",
+  "Back",
+  "Lats",
+  "Chest",
+  "Core",
+  "Lower Back",
+  "Glutes",
+  "Hips",
+  "Hamstrings",
+  "Quads",
+  "Knees",
+  "Calves",
+  "Ankles",
+  "Feet",
+  "Arms",
+  "Full Body"
+];
+
+const EXERCISES = [
+
+  {
+    id:"biceps-curl",
+    name:"Biceps Curl",
+    region:"Biceps",
+    type:"Strength",
+    icon:"💪",
+    description:
+      "Stand tall with your elbows close to your sides. Curl the weight toward your shoulders without swinging your upper arms, then lower slowly under control."
+  },
+
+  {
+    id:"hammer-curl",
+    name:"Hammer Curl",
+    region:"Biceps",
+    type:"Strength",
+    icon:"💪",
+    description:
+      "Hold the weights with palms facing inward. Keep your elbows close to your body and curl upward while maintaining a neutral wrist."
+  },
+
+  {
+    id:"triceps-extension",
+    name:"Overhead Triceps Extension",
+    region:"Triceps",
+    type:"Strength",
+    icon:"🏋️",
+    description:
+      "Hold a weight overhead. Bend at the elbows to lower it behind the head, then straighten the elbows without allowing them to flare excessively."
+  },
+
+  {
+    id:"triceps-pushdown",
+    name:"Triceps Pushdown",
+    region:"Triceps",
+    type:"Strength",
+    icon:"🏋️",
+    description:
+      "Keep your elbows beside your torso. Push the cable or resistance band downward until the elbows straighten, then return slowly."
+  },
+
+  {
+    id:"wrist-flexion",
+    name:"Wrist Flexion",
+    region:"Wrists",
+    type:"Strength",
+    icon:"✋",
+    description:
+      "Support the forearm and allow the wrist to move freely. Curl the hand upward through a comfortable range and lower slowly."
+  },
+
+  {
+    id:"wrist-stretch",
+    name:"Wrist Flexor Stretch",
+    region:"Wrists",
+    type:"Stretch",
+    icon:"✋",
+    description:
+      "Extend one arm with the palm facing upward. Gently draw the fingers downward with the opposite hand until a mild forearm stretch is felt."
+  },
+
+  {
+    id:"forearm-pronation",
+    name:"Forearm Rotation",
+    region:"Forearms",
+    type:"Mobility",
+    icon:"✋",
+    description:
+      "Keep the elbow bent at approximately 90 degrees. Slowly rotate the palm upward and downward through a comfortable range."
+  },
+
+  {
+    id:"shoulder-press",
+    name:"Shoulder Press",
+    region:"Shoulders",
+    type:"Strength",
+    icon:"🏋️",
+    description:
+      "Begin with weights around shoulder height. Press overhead while keeping the trunk controlled, then lower smoothly."
+  },
+
+  {
+    id:"lateral-raise",
+    name:"Lateral Raise",
+    region:"Shoulders",
+    type:"Strength",
+    icon:"🏋️",
+    description:
+      "With a slight bend in the elbows, raise the arms out to the sides to a comfortable height. Avoid shrugging the shoulders."
+  },
+
+  {
+    id:"shoulder-circles",
+    name:"Shoulder Circles",
+    region:"Shoulders",
+    type:"Mobility",
+    icon:"🔄",
+    description:
+      "Move both shoulders slowly through comfortable circles, keeping the neck relaxed and avoiding painful ranges."
+  },
+
+  {
+    id:"neck-side-stretch",
+    name:"Neck Side Stretch",
+    region:"Neck",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Sit or stand tall. Gently tilt one ear toward the same-side shoulder until a light stretch is felt along the opposite side of the neck."
+  },
+
+  {
+    id:"neck-rotation",
+    name:"Neck Rotation",
+    region:"Neck",
+    type:"Mobility",
+    icon:"🧘",
+    description:
+      "Turn the head slowly from side to side while keeping the shoulders relaxed. Stay within a comfortable, pain-free range."
+  },
+
+  {
+    id:"upper-back-row",
+    name:"Seated Row",
+    region:"Upper Back",
+    type:"Strength",
+    icon:"🚣",
+    description:
+      "Draw the handles or resistance band toward the ribs. Keep the chest lifted and gently draw the shoulder blades together."
+  },
+
+  {
+    id:"thoracic-rotation",
+    name:"Thoracic Rotation",
+    region:"Upper Back",
+    type:"Mobility",
+    icon:"🔄",
+    description:
+      "Keep the hips relatively still while gently rotating the upper trunk from side to side."
+  },
+
+  {
+    id:"lat-pulldown",
+    name:"Lat Pulldown",
+    region:"Lats",
+    type:"Strength",
+    icon:"🏋️",
+    description:
+      "Pull the bar toward the upper chest while keeping the torso controlled. Think about drawing the elbows downward toward the ribs."
+  },
+
+  {
+    id:"lat-stretch",
+    name:"Lat Stretch",
+    region:"Lats",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Reach the arms forward while gently moving the hips backward until a stretch is felt along the sides of the upper back."
+  },
+
+  {
+    id:"chest-press",
+    name:"Chest Press",
+    region:"Chest",
+    type:"Strength",
+    icon:"🏋️",
+    description:
+      "Press the handles or weights forward from chest level. Maintain controlled shoulder positioning and return slowly."
+  },
+
+  {
+    id:"wall-pushup",
+    name:"Wall Push-Up",
+    region:"Chest",
+    type:"Strength",
+    icon:"🧱",
+    description:
+      "Place your hands on a wall. Bend your elbows to bring your body toward the wall, then press away while keeping the body aligned."
+  },
+
+  {
+    id:"doorway-chest-stretch",
+    name:"Doorway Chest Stretch",
+    region:"Chest",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Place the forearm against a doorway and gently rotate the body away until a comfortable stretch is felt across the chest."
+  },
+
+  {
+    id:"plank",
+    name:"Plank",
+    region:"Core",
+    type:"Strength",
+    icon:"🧱",
+    description:
+      "Maintain a straight line from shoulders through hips. Brace the abdomen and avoid allowing the lower back to sag."
+  },
+
+  {
+    id:"dead-bug",
+    name:"Dead Bug",
+    region:"Core",
+    type:"Strength",
+    icon:"🪲",
+    description:
+      "Lie on your back with hips and knees bent. Brace the abdomen while slowly lowering the opposite arm and leg, then return."
+  },
+
+  {
+    id:"bird-dog",
+    name:"Bird Dog",
+    region:"Lower Back",
+    type:"Strength",
+    icon:"🐦",
+    description:
+      "From hands and knees, extend the opposite arm and leg while keeping the trunk steady. Return slowly and change sides."
+  },
+
+  {
+    id:"cat-cow",
+    name:"Cat-Cow",
+    region:"Back",
+    type:"Mobility",
+    icon:"🐈",
+    description:
+      "On hands and knees, gently alternate between rounding and extending the spine through a comfortable range."
+  },
+
+  {
+    id:"knee-to-chest",
+    name:"Knee to Chest Stretch",
+    region:"Lower Back",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Lie on your back and gently draw one knee toward the chest until a comfortable stretch is felt."
+  },
+
+  {
+    id:"glute-bridge",
+    name:"Glute Bridge",
+    region:"Glutes",
+    type:"Strength",
+    icon:"🌉",
+    description:
+      "Lie on your back with knees bent. Press through the feet and lift the hips while squeezing the gluteal muscles."
+  },
+
+  {
+    id:"figure-four",
+    name:"Figure Four Stretch",
+    region:"Glutes",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Cross one ankle over the opposite thigh. Gently draw the legs toward you until a comfortable stretch is felt in the buttock."
+  },
+
+  {
+    id:"hip-flexor-stretch",
+    name:"Hip Flexor Stretch",
+    region:"Hips",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Use a split or half-kneeling position and gently shift the pelvis forward while keeping the trunk upright."
+  },
+
+  {
+    id:"hip-abduction",
+    name:"Standing Hip Abduction",
+    region:"Hips",
+    type:"Strength",
+    icon:"🦵",
+    description:
+      "Stand tall and move one leg slowly out to the side without leaning the trunk. Return with control."
+  },
+
+  {
+    id:"hamstring-curl",
+    name:"Hamstring Curl",
+    region:"Hamstrings",
+    type:"Strength",
+    icon:"🦵",
+    description:
+      "Bend the knee to bring the heel toward the buttock while keeping the thighs relatively aligned."
+  },
+
+  {
+    id:"hamstring-stretch",
+    name:"Hamstring Stretch",
+    region:"Hamstrings",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Extend one leg and gently hinge forward from the hips until a mild stretch is felt along the back of the thigh."
+  },
+
+  {
+    id:"squat",
+    name:"Squat",
+    region:"Quads",
+    type:"Strength",
+    icon:"🏋️",
+    description:
+      "Sit the hips backward and bend the knees while keeping the feet stable. Rise by pressing through the feet."
+  },
+
+  {
+    id:"sit-to-stand",
+    name:"Sit to Stand",
+    region:"Quads",
+    type:"Strength",
+    icon:"🪑",
+    description:
+      "From a stable chair, lean slightly forward and stand using the legs. Lower back to the chair slowly and under control."
+  },
+
+  {
+    id:"quad-stretch",
+    name:"Quadriceps Stretch",
+    region:"Quads",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Bend one knee and gently bring the heel toward the buttock while keeping the knees reasonably close together."
+  },
+
+  {
+    id:"knee-extension",
+    name:"Seated Knee Extension",
+    region:"Knees",
+    type:"Strength",
+    icon:"🦵",
+    description:
+      "While seated, slowly straighten the knee and tighten the front thigh muscles. Lower the leg with control."
+  },
+
+  {
+    id:"mini-squat",
+    name:"Supported Mini Squat",
+    region:"Knees",
+    type:"Strength",
+    icon:"🦵",
+    description:
+      "Hold a stable support and perform a shallow squat within a comfortable range, keeping the knees aligned with the feet."
+  },
+
+  {
+    id:"calf-raise",
+    name:"Calf Raise",
+    region:"Calves",
+    type:"Strength",
+    icon:"🦶",
+    description:
+      "Rise slowly onto the balls of the feet, pause briefly, then lower the heels under control."
+  },
+
+  {
+    id:"calf-stretch",
+    name:"Standing Calf Stretch",
+    region:"Calves",
+    type:"Stretch",
+    icon:"🧘",
+    description:
+      "Step one foot behind you and keep the heel down while gently moving the body forward."
+  },
+
+  {
+    id:"ankle-circles",
+    name:"Ankle Circles",
+    region:"Ankles",
+    type:"Mobility",
+    icon:"🔄",
+    description:
+      "Move the ankle slowly through comfortable circles in both directions."
+  },
+
+  {
+    id:"ankle-dorsiflexion",
+    name:"Ankle Dorsiflexion",
+    region:"Ankles",
+    type:"Mobility",
+    icon:"🦶",
+    description:
+      "Gently move the knee forward over the foot while keeping the heel down and the movement comfortable."
+  },
+
+  {
+    id:"toe-raises",
+    name:"Toe Raises",
+    region:"Feet",
+    type:"Strength",
+    icon:"🦶",
+    description:
+      "Keep the heels on the floor and lift the front of the feet upward, then lower slowly."
+  },
+
+  {
+    id:"toe-curls",
+    name:"Toe Curls",
+    region:"Feet",
+    type:"Strength",
+    icon:"🦶",
+    description:
+      "Curl the toes gently against the floor or a towel and then release."
+  },
+
+  {
+    id:"single-leg-balance",
+    name:"Single Leg Balance",
+    region:"Full Body",
+    type:"Balance",
+    icon:"⚖️",
+    description:
+      "Stand near a stable support and lift one foot slightly from the floor. Maintain upright posture while balancing."
+  },
+
+  {
+    id:"marching",
+    name:"Standing March",
+    region:"Full Body",
+    type:"Mobility",
+    icon:"🚶",
+    description:
+      "March comfortably on the spot, lifting alternate knees while maintaining an upright posture."
+  }
+
+];
+
+
+/* ---------------------------------------------------------
+   STATE
+--------------------------------------------------------- */
+
+let customExercises =
+  JSON.parse(localStorage.getItem("moveflowCustomExercises") || "[]");
+
+let session =
+  JSON.parse(localStorage.getItem("moveflowCurrentSession") || "[]");
+
+let savedSessions =
+  JSON.parse(localStorage.getItem("moveflowSavedSessions") || "[]");
+
+let timeline = [];
+let timelineIndex = 0;
+let remaining = 0;
+let originalStageTime = 0;
+let timerInterval = null;
+let running = false;
+
+let currentCustomMedia = null;
+
+
+/* ---------------------------------------------------------
+   NAVIGATION
+--------------------------------------------------------- */
+
+document.querySelectorAll(".nav-btn").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    document.querySelectorAll(".nav-btn")
+      .forEach(b => b.classList.remove("active"));
+
+    button.classList.add("active");
+
+    document.querySelectorAll(".page")
+      .forEach(page => page.classList.remove("active"));
+
+    document
+      .getElementById(button.dataset.page)
+      .classList.add("active");
+
+    if (button.dataset.page === "library") {
+      renderLibrary();
+    }
+
+    if (button.dataset.page === "saved") {
+      renderSavedSessions();
+    }
+
+    if (button.dataset.page === "session") {
+      rebuildTimeline(false);
+    }
+
+  });
+
+});
+
+
+/* ---------------------------------------------------------
+   REGION MENUS
+--------------------------------------------------------- */
+
+function populateRegions() {
+
+  const filter = document.getElementById("regionFilter");
+  const custom = document.getElementById("customRegion");
+
+  filter.innerHTML = "";
+  custom.innerHTML = "";
+
+  REGIONS.forEach(region => {
+
+    const o1 = document.createElement("option");
+    o1.value = region;
+    o1.textContent = region;
+    filter.appendChild(o1);
+
+    if (region !== "All") {
+
+      const o2 = document.createElement("option");
+      o2.value = region;
+      o2.textContent = region;
+      custom.appendChild(o2);
+
+    }
+
+  });
+
+}
+
+function filterRegion(region) {
+
+  const select = document.getElementById("regionFilter");
+
+  if (
+    region === "Arms"
+  ) {
+    select.value = "Arms";
+  } else if (
+    region === "Back"
+  ) {
+    select.value = "Back";
+  } else {
+    select.value = region;
+  }
+
+  renderLibrary();
+
+  document
+    .getElementById("libraryGrid")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+}
+
+
+/* ---------------------------------------------------------
+   EXERCISE LIBRARY
+--------------------------------------------------------- */
+
+function getAllExercises() {
+  return [...EXERCISES, ...customExercises];
+}
+
+function regionMatches(exerciseRegion, selected) {
+
+  if (selected === "All") return true;
+
+  if (selected === "Arms") {
+    return [
+      "Biceps",
+      "Triceps",
+      "Wrists",
+      "Forearms",
+      "Arms"
+    ].includes(exerciseRegion);
+  }
+
+  if (selected === "Back") {
+    return [
+      "Back",
+      "Upper Back",
+      "Lower Back",
+      "Lats"
+    ].includes(exerciseRegion);
+  }
+
+  return exerciseRegion === selected;
+}
+
+function renderLibrary() {
+
+  const grid = document.getElementById("libraryGrid");
+
+  const search =
+    document.getElementById("librarySearch")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const region =
+    document.getElementById("regionFilter").value;
+
+  const type =
+    document.getElementById("typeFilter").value;
+
+  grid.innerHTML = "";
+
+  const exercises =
+    getAllExercises().filter(exercise => {
+
+      const text =
+        (
+          exercise.name +
+          " " +
+          exercise.region +
+          " " +
+          exercise.type +
+          " " +
+          exercise.description
+        ).toLowerCase();
+
+      const searchOK =
+        !search || text.includes(search);
+
+      const regionOK =
+        regionMatches(exercise.region,region);
+
+      const typeOK =
+        type === "All" || exercise.type === type;
+
+      return searchOK && regionOK && typeOK;
+
+    });
+
+  if (!exercises.length) {
+
+    grid.innerHTML =
+      '<div class="card muted">No matching exercises found.</div>';
+
+    return;
+  }
+
+  exercises.forEach(exercise => {
+
+    const card = document.createElement("div");
+
+    card.className = "exercise-card";
+
+    card.innerHTML = `
+      <div class="visual">${exercise.icon || "🏋️"}</div>
+
+      <div class="body">
+
+        <div class="tags">
+          <span class="tag">${escapeHTML(exercise.region)}</span>
+          <span class="tag">${escapeHTML(exercise.type)}</span>
+          ${
+            exercise.custom
+            ? '<span class="tag">Custom</span>'
+            : ""
+          }
+        </div>
+
+        <h3>${escapeHTML(exercise.name)}</h3>
+
+        <p>${escapeHTML(exercise.description)}</p>
+
+        <div class="row">
+          <button
+            class="btn green small"
+            onclick="addExerciseToSession('${exercise.id}')"
+          >
+            + Add
+          </button>
+
+          ${
+            exercise.custom
+            ?
+            `<button
+               class="btn red small"
+               onclick="deleteCustomExercise('${exercise.id}')"
+             >
+               Delete
+             </button>`
+            :
+            ""
+          }
+
+        </div>
+
+      </div>
+    `;
+
+    grid.appendChild(card);
+
+  });
+
+}
+
+
+/* ---------------------------------------------------------
+   SESSION GENERATOR
+--------------------------------------------------------- */
+
+function generateSession() {
+
+  const count =
+    Math.max(
+      1,
+      Number(document.getElementById("exerciseCount").value) || 1
+    );
+
+  const totalMinutes =
+    Math.max(
+      1,
+      Number(document.getElementById("totalMinutes").value) || 20
+    );
+
+  const rest =
+    Math.max(
+      0,
+      Number(document.getElementById("restSeconds").value) || 0
+    );
+
+  const sets =
+    Math.max(
+      1,
+      Number(document.getElementById("defaultSets").value) || 1
+    );
+
+  const reps =
+    Math.max(
+      0,
+      Number(document.getElementById("defaultReps").value) || 0
+    );
+
+  const auto =
+    document.getElementById("automaticTiming").checked;
+
+  let duration =
+    Math.max(
+      5,
+      Number(document.getElementById("exerciseSeconds").value) || 60
+    );
+
+  if (auto) {
+
+    const totalSeconds = totalMinutes * 60;
+
+    const totalRest =
+      Math.max(0,count - 1) * rest;
+
+    duration =
+      Math.floor(
+        Math.max(count * 5,totalSeconds - totalRest) / count
+      );
+
+  }
+
+  const pool = getAllExercises();
+
+  const shuffled = [...pool]
+    .sort(() => Math.random() - 0.5);
+
+  session =
+    Array.from(
+      {length:count},
+      (_,index) => {
+
+        const base =
+          shuffled[index % shuffled.length];
+
+        return {
+          ...base,
+          duration,
+          rest,
+          sets,
+          reps
+        };
+
+      }
+    );
+
+  saveCurrentSessionState();
+
+  renderBuilderSession();
+
+  rebuildTimeline(true);
+
+  alert("Session generated.");
+
+}
+
+
+/* ---------------------------------------------------------
+   SESSION EDITING
+--------------------------------------------------------- */
+
+function addExerciseToSession(id) {
+
+  const base =
+    getAllExercises().find(e => e.id === id);
+
+  if (!base) return;
+
+  session.push({
+    ...base,
+    duration:60,
+    rest:30,
+    sets:1,
+    reps:10
+  });
+
+  saveCurrentSessionState();
+
+  renderBuilderSession();
+
+  alert(base.name + " added to your session.");
+
+}
+
+function removeSessionExercise(index) {
+
+  session.splice(index,1);
+
+  saveCurrentSessionState();
+
+  renderBuilderSession();
+
+  rebuildTimeline(true);
+
+}
+
+function moveExercise(index,direction) {
+
+  const target = index + direction;
+
+  if (
+    target < 0 ||
+    target >= session.length
+  ) return;
+
+  [session[index],session[target]] =
+    [session[target],session[index]];
+
+  saveCurrentSessionState();
+
+  renderBuilderSession();
+
+}
+
+function updateExercise(index,key,value) {
+
+  if (!session[index]) return;
+
+  session[index][key] =
+    Math.max(
+      key === "rest" || key === "reps" ? 0 : 1,
+      Number(value) || 0
+    );
+
+  saveCurrentSessionState();
+
+}
+
+function renderBuilderSession() {
+
+  const list =
+    document.getElementById("builderSessionList");
+
+  list.innerHTML = "";
+
+  if (!session.length) {
+
+    list.innerHTML =
+      '<div class="muted">No exercises in the current session.</div>';
+
+    return;
+  }
+
+  session.forEach((exercise,index) => {
+
+    const row = document.createElement("div");
+
+    row.className = "exercise-row";
+
+    row.innerHTML = `
+
+      <h3>
+        ${index + 1}. ${escapeHTML(exercise.name)}
+      </h3>
+
+      <div class="details">
+        ${escapeHTML(exercise.region)}
+        •
+        ${escapeHTML(exercise.type)}
+      </div>
+
+      <div class="grid3">
+
+        <div class="field">
+          <label>Seconds</label>
+          <input
+            type="number"
+            min="1"
+            value="${exercise.duration || 60}"
+            onchange="updateExercise(${index},'duration',this.value)"
+          >
+        </div>
+
+        <div class="field">
+          <label>Sets</label>
+          <input
+            type="number"
+            min="1"
+            value="${exercise.sets || 1}"
+            onchange="updateExercise(${index},'sets',this.value)"
+          >
+        </div>
+
+        <div class="field">
+          <label>Reps</label>
+          <input
+            type="number"
+            min="0"
+            value="${exercise.reps || 0}"
+            onchange="updateExercise(${index},'reps',this.value)"
+          >
+        </div>
+
+      </div>
+
+      <br>
+
+      <div class="field">
+        <label>Rest after this exercise (seconds)</label>
+        <input
+          type="number"
+          min="0"
+          value="${exercise.rest || 0}"
+          onchange="updateExercise(${index},'rest',this.value)"
+        >
+      </div>
+
+      <br>
+
+      <div class="row">
+
+        <button
+          class="btn small"
+          onclick="moveExercise(${index},-1)"
+        >
+          ↑
+        </button>
+
+        <button
+          class="btn small"
+          onclick="moveExercise(${index},1)"
+        >
+          ↓
+        </button>
+
+        <button
+          class="btn red small"
+          onclick="removeSessionExercise(${index})"
+        >
+          Remove
+        </button>
+
+      </div>
+
+    `;
+
+    list.appendChild(row);
+
+  });
+
+}
+
+function clearSession() {
+
+  if (!confirm("Clear the current session?")) return;
+
+  session = [];
+
+  saveCurrentSessionState();
+
+  renderBuilderSession();
+
+  rebuildTimeline(true);
+
+}
+
+function saveCurrentSessionState() {
+  localStorage.setItem(
+    "moveflowCurrentSession",
+    JSON.stringify(session)
+  );
+}
+
+
+/* ---------------------------------------------------------
+   SAVED WORKOUT PLAYLISTS
+--------------------------------------------------------- */
+
+function saveCurrentSession() {
+
+  if (!session.length) {
+    alert("Build a session first.");
+    return;
+  }
+
+  const input =
+    document.getElementById("sessionName");
+
+  const name =
+    input.value.trim() ||
+    "Workout " +
+    new Date().toLocaleDateString();
+
+  savedSessions.unshift({
+    id:"session-" + Date.now(),
+    name,
+    saved:new Date().toISOString(),
+    exercises:JSON.parse(JSON.stringify(session))
+  });
+
+  localStorage.setItem(
+    "moveflowSavedSessions",
+    JSON.stringify(savedSessions)
+  );
+
+  input.value = "";
+
+  renderSavedSessions();
+
+  alert("Session saved.");
+
+}
+
+function renderSavedSessions() {
+
+  const container =
+    document.getElementById("savedSessions");
+
+  container.innerHTML = "";
+
+  if (!savedSessions.length) {
+
+    container.innerHTML =
+      '<div class="card muted">No saved sessions yet.</div>';
+
+    return;
+  }
+
+  savedSessions.forEach(saved => {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "saved-card";
+
+    card.innerHTML = `
+
+      <h3>★ ${escapeHTML(saved.name)}</h3>
+
+      <p class="muted">
+        ${saved.exercises.length} exercises
+      </p>
+
+      <div class="row">
+
+        <button
+          class="btn green small"
+          onclick="loadSavedSession('${saved.id}')"
+        >
+          Load
+        </button>
+
+        <button
+          class="btn red small"
+          onclick="deleteSavedSession('${saved.id}')"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    `;
+
+    container.appendChild(card);
+
+  });
+
+}
+
+function loadSavedSession(id) {
+
+  const saved =
+    savedSessions.find(s => s.id === id);
+
+  if (!saved) return;
+
+  session =
+    JSON.parse(
+      JSON.stringify(saved.exercises)
+    );
+
+  saveCurrentSessionState();
+
+  renderBuilderSession();
+
+  rebuildTimeline(true);
+
+  alert("Session loaded.");
+
+}
+
+function deleteSavedSession(id) {
+
+  if (!confirm("Delete this saved session?")) return;
+
+  savedSessions =
+    savedSessions.filter(s => s.id !== id);
+
+  localStorage.setItem(
+    "moveflowSavedSessions",
+    JSON.stringify(savedSessions)
+  );
+
+  renderSavedSessions();
+
+}
+
+
+/* ---------------------------------------------------------
+   CUSTOM EXERCISES
+--------------------------------------------------------- */
+
+function previewMedia(event) {
+
+  const file =
+    event.target.files[0];
+
+  const preview =
+    document.getElementById("mediaPreview");
+
+  if (!file) {
+    preview.innerHTML =
+      "Image or video preview";
+    currentCustomMedia = null;
+    return;
+  }
+
+  const reader =
+    new FileReader();
+
+  reader.onload = function(e) {
+
+    currentCustomMedia = {
+      data:e.target.result,
+      type:file.type
+    };
+
+    if (file.type.startsWith("video")) {
+
+      preview.innerHTML = `
+        <video
+          controls
+          src="${e.target.result}"
+        ></video>
+      `;
+
+    } else {
+
+      preview.innerHTML = `
+        <img
+          src="${e.target.result}"
+          alt="Exercise preview"
+        >
+      `;
+
+    }
+
+  };
+
+  /*
+    Small files can be stored with the exercise.
+    Very large videos may exceed browser storage limits.
+  */
+  reader.readAsDataURL(file);
+
+}
+
+function addCustomExercise() {
+
+  const name =
+    document.getElementById("customName")
+      .value.trim();
+
+  const description =
+    document.getElementById("customDescription")
+      .value.trim();
+
+  if (!name || !description) {
+
+    alert(
+      "Please enter an exercise name and description."
+    );
+
+    return;
+  }
+
+  const exercise = {
+
+    id:"custom-" + Date.now(),
+
+    name,
+
+    region:
+      document.getElementById("customRegion").value,
+
+    type:
+      document.getElementById("customType").value,
+
+    icon:"🎥",
+
+    description,
+
+    custom:true,
+
+    media:
+      currentCustomMedia || null
+
+  };
+
+  customExercises.unshift(exercise);
+
+  try {
+
+    localStorage.setItem(
+      "moveflowCustomExercises",
+      JSON.stringify(customExercises)
+    );
+
+  } catch(error) {
+
+    /*
+      Large video data can exceed localStorage limits.
+      Keep exercise text but remove the media.
+    */
+
+    exercise.media = null;
+
+    localStorage.setItem(
+      "moveflowCustomExercises",
+      JSON.stringify(customExercises)
+    );
+
+    alert(
+      "The exercise was saved, but the media file was too large for browser storage. A future server or cloud-storage version can support larger trainer videos."
+    );
+
+  }
+
+  document.getElementById("customName").value = "";
+  document.getElementById("customDescription").value = "";
+  document.getElementById("customMedia").value = "";
+
+  document.getElementById("mediaPreview")
+    .innerHTML = "Image or video preview";
+
+  currentCustomMedia = null;
+
+  renderLibrary();
+
+  alert("Custom exercise saved.");
+
+}
+
+function deleteCustomExercise(id) {
+
+  if (!confirm("Delete this custom exercise?")) return;
+
+  customExercises =
+    customExercises.filter(e => e.id !== id);
+
+  localStorage.setItem(
+    "moveflowCustomExercises",
+    JSON.stringify(customExercises)
+  );
+
+  renderLibrary();
+
+}
+
+
+/* ---------------------------------------------------------
+   WORKOUT TIMELINE
+--------------------------------------------------------- */
+
+function rebuildTimeline(reset = true) {
+
+  timeline = [];
+
+  session.forEach((exercise,index) => {
+
+    timeline.push({
+      kind:"exercise",
+      exercise,
+      seconds:
+        Math.max(1,Number(exercise.duration) || 60),
+      exerciseIndex:index
+    });
+
+    if (
+      index < session.length - 1 &&
+      Number(exercise.rest) > 0
+    ) {
+
+      timeline.push({
+        kind:"rest",
+        exercise,
+        seconds:Number(exercise.rest),
+        exerciseIndex:index
+      });
+
+    }
+
+  });
+
+  if (reset) {
+    timelineIndex = 0;
+    running = false;
+    clearInterval(timerInterval);
+  }
+
+  if (!timeline.length) {
+
+    remaining = 0;
+    originalStageTime = 0;
+    updateWorkoutDisplay();
+    return;
+
+  }
+
+  if (timelineIndex >= timeline.length) {
+    timelineIndex = 0;
+  }
+
+  remaining =
+    timeline[timelineIndex].seconds;
+
+  originalStageTime = remaining;
+
+  updateWorkoutDisplay();
+
+}
+
+function toggleWorkout() {
+
+  if (!timeline.length) {
+
+    rebuildTimeline(true);
+
+    if (!timeline.length) {
+      alert("Build a session first.");
+      return;
+    }
+
+  }
+
+  if (running) {
+
+    running = false;
+
+    clearInterval(timerInterval);
+
+    document.getElementById("playButton")
+      .textContent = "Resume";
+
+    return;
+
+  }
+
+  running = true;
+
+  document.getElementById("playButton")
+    .textContent = "Pause";
+
+  announceCurrentStage();
+
+  timerInterval =
+    setInterval(() => {
+
+      remaining--;
+
+      if (remaining === 10) {
+        speak("10 seconds remaining.");
+      }
+
+      if (remaining <= 0) {
+
+        nextStage();
+
+      } else {
+
+        updateWorkoutDisplay();
+
+      }
+
+    },1000);
+
+}
+
+function nextStage() {
+
+  timelineIndex++;
+
+  if (timelineIndex >= timeline.length) {
+
+    clearInterval(timerInterval);
+
+    running = false;
+
+    timelineIndex =
+      Math.max(0,timeline.length - 1);
+
+    remaining = 0;
+
+    updateWorkoutDisplay();
+
+    speak(
+      "Workout complete. Well done."
+    );
+
+    document.getElementById("playButton")
+      .textContent = "Start";
+
+    return;
+
+  }
+
+  remaining =
+    timeline[timelineIndex].seconds;
+
+  originalStageTime = remaining;
+
+  updateWorkoutDisplay();
+
+  announceCurrentStage();
+
+}
+
+function skipStage() {
+
+  if (!timeline.length) return;
+
+  nextStage();
+
+}
+
+function previousStage() {
+
+  if (!timeline.length) return;
+
+  timelineIndex =
+    Math.max(0,timelineIndex - 1);
+
+  remaining =
+    timeline[timelineIndex].seconds;
+
+  originalStageTime = remaining;
+
+  updateWorkoutDisplay();
+
+  announceCurrentStage();
+
+}
+
+function resetWorkout() {
+
+  clearInterval(timerInterval);
+
+  running = false;
+
+  timelineIndex = 0;
+
+  if (timeline.length) {
+    remaining = timeline[0].seconds;
+    originalStageTime = remaining;
+  } else {
+    remaining = 0;
+  }
+
+  document.getElementById("playButton")
+    .textContent = "Start";
+
+  updateWorkoutDisplay();
+
+}
+
+function updateWorkoutDisplay() {
+
+  const phase =
+    document.getElementById("phase");
+
+  const name =
+    document.getElementById("currentName");
+
+  const description =
+    document.getElementById("currentDescription");
+
+  const timer =
+    document.getElementById("timer");
+
+  const repInfo =
+    document.getElementById("repInfo");
+
+  const stageIcon =
+    document.getElementById("stageIcon");
+
+  const progress =
+    document.getElementById("progress");
+
+  const position =
+    document.getElementById("sessionPosition");
+
+  if (!timeline.length) {
+
+    phase.textContent = "Ready";
+
+    name.textContent =
+      "Build a session to begin";
+
+    description.textContent =
+      "Your exercise instructions appear here.";
+
+    timer.textContent = "00:00";
+
+    timer.classList.remove("rest");
+
+    repInfo.textContent = "";
+
+    position.textContent = "";
+
+    progress.style.width = "0%";
+
+    stageIcon.textContent = "🏋️";
+
+    return;
+
+  }
+
+  const stage =
+    timeline[timelineIndex];
+
+  const mins =
+    Math.floor(remaining / 60);
+
+  const secs =
+    remaining % 60;
+
+  timer.textContent =
+    String(mins).padStart(2,"0") +
+    ":" +
+    String(secs).padStart(2,"0");
+
+  const percent =
+    originalStageTime
+      ?
+      ((originalStageTime - remaining) /
+        originalStageTime) * 100
+      :
+      0;
+
+  progress.style.width =
+    Math.min(100,Math.max(0,percent)) + "%";
+
+  if (stage.kind === "rest") {
+
+    phase.textContent = "Recovery";
+
+    name.textContent = "Rest";
+
+    description.textContent =
+      "Recover, breathe and prepare for the next exercise.";
+
+    timer.classList.add("rest");
+
+    stageIcon.textContent = "⏸️";
+
+    repInfo.textContent = "";
+
+  } else {
+
+    const exercise =
+      stage.exercise;
+
+    phase.textContent = "Exercise";
+
+    name.textContent =
+      exercise.name;
+
+    description.textContent =
+      exercise.description;
+
+    timer.classList.remove("rest");
+
+    stageIcon.textContent =
+      exercise.icon || "🏋️";
+
+    repInfo.textContent =
+      (
+        exercise.sets
+          ? exercise.sets + " set" +
+            (exercise.sets === 1 ? "" : "s")
+          : ""
+      ) +
+      (
+        exercise.reps
+          ? " • " + exercise.reps + " reps"
+          : ""
+      );
+
+  }
+
+  position.textContent =
+    "Stage " +
+    (timelineIndex + 1) +
+    " of " +
+    timeline.length;
+
+}
+
+
+/* ---------------------------------------------------------
+   VOICE COACHING
+--------------------------------------------------------- */
+
+function speak(text) {
+
+  if (
+    !document.getElementById("voiceEnabled").checked
+  ) return;
+
+  if (!("speechSynthesis" in window)) return;
+
+  speechSynthesis.cancel();
+
+  const music =
+    document.getElementById("musicPlayer");
+
+  const originalVolume =
+    music.volume;
+
+  if (!music.paused) {
+    music.volume =
+      Math.min(originalVolume,0.18);
+  }
+
+  const utterance =
+    new SpeechSynthesisUtterance(text);
+
+  utterance.rate = 1;
+  utterance.pitch = 1;
+
+  utterance.onend = function() {
+
+    if (!music.paused) {
+      music.volume = originalVolume;
+    }
+
+  };
+
+  speechSynthesis.speak(utterance);
+
+}
+
+function announceCurrentStage() {
+
+  if (!timeline.length) return;
+
+  const stage =
+    timeline[timelineIndex];
+
+  if (stage.kind === "rest") {
+
+    speak(
+      "Rest for " +
+      stage.seconds +
+      " seconds."
+    );
+
+    return;
+
+  }
+
+  const exercise =
+    stage.exercise;
+
+  let message =
+    "Next exercise. " +
+    exercise.name +
+    ". " +
+    exercise.description;
+
+  if (exercise.sets) {
+    message +=
+      " " +
+      exercise.sets +
+      " sets.";
+  }
+
+  if (exercise.reps) {
+    message +=
+      " " +
+      exercise.reps +
+      " repetitions.";
+  }
+
+  if (
+    document.getElementById("motivationEnabled").checked
+  ) {
+
+    const phrases = [
+      "Stay controlled and keep going.",
+      "Good work. Focus on your technique.",
+      "Keep moving. You are doing well.",
+      "Stay steady and breathe.",
+      "Strong and controlled."
+    ];
+
+    message +=
+      " " +
+      phrases[
+        Math.floor(Math.random() * phrases.length)
+      ];
+
+  }
+
+  speak(message);
+
+}
+
+
+/* ---------------------------------------------------------
+   MUSIC
+--------------------------------------------------------- */
+
+function loadMusic(event) {
+
+  const file =
+    event.target.files[0];
+
+  if (!file) return;
+
+  const audio =
+    document.getElementById("musicPlayer");
+
+  audio.src =
+    URL.createObjectURL(file);
+
+  audio.volume =
+    Number(
+      document.getElementById("musicVolume").value
+    ) / 100;
+
+}
+
+function setMusicVolume(value) {
+
+  const audio =
+    document.getElementById("musicPlayer");
+
+  audio.volume =
+    Number(value) / 100;
+
+  document.getElementById("musicVolumeLabel")
+    .textContent =
+      value + "%";
+
+}
+
+
+/* ---------------------------------------------------------
+   UTILITIES
+--------------------------------------------------------- */
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* ---------------------------------------------------------
+   INITIALISE
+--------------------------------------------------------- */
+
+populateRegions();
+
+renderBuilderSession();
+
+renderLibrary();
+
+renderSavedSessions();
+
+rebuildTimeline(true);
+
+</script>
+
+</body>
+</html>
